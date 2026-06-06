@@ -12,3 +12,7 @@ Bu proje, Pollutions AI kullanılarak geliştirilmiş, kullanımı son derece sa
 * **Sade ve Kolay:** Karmaşık ayarlar gerektirmeden hızlıca çalıştırılabilir.
 * **Pollutions AI Entegrasyonu:** Güçlü yapay zeka desteği.
 * **Temel Kullanım:** Her seviyeden kullanıcı için uygundur.
+---
+
+# DİKKAT!
+* Bu projenin stabil çalıştığı link: "https://lego-ai-iota.vercel.app/"
