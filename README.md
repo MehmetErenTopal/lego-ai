@@ -1,3 +1,2 @@
-# 🤖 LEGO AI - Samimi ve Akıllı Yapay Zeka Asistanı
-
-![Built with Pollinations](
+# 🤖 LEGO AI - Akıllı Yapay Zeka Asistanı
+https://github.com/pollinations/pollinations/raw/main/assets/logo-text-white.svg
