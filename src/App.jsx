@@ -20,7 +20,7 @@ const API_KEY = decodeApiKey(ENCODED_API_KEY);
 const MODELS = {
   text: 'mistral', 
   image: 'flux',
-  video: 'nova-reel',
+  video: 'ltx-2',
   audio: 'universal-2'
 };
 
