@@ -18,7 +18,7 @@ const API_KEY = decodeApiKey(ENCODED_API_KEY);
 
 // --- BİRLEŞİK MODELLER VE URL YAPILARI ---
 const MODELS = {
-  text: 'openai', 
+  text: 'mistral', 
   image: 'flux',
   video: 'ltx-2',
   audio: 'universal-2'
