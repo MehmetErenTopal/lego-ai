@@ -18,10 +18,10 @@ const API_KEY = decodeApiKey(ENCODED_API_KEY);
 
 // --- BİRLEŞİK MODELLER VE URL YAPILARI ---
 const MODELS = {
-  text: 'mistral', 
-  image: 'flux',
+  text: 'gemma', 
+  image: 'gptimage',
   video: 'ltx-2',
-  audio: 'universal-2'
+  audio: 'whisper'
 };
 
 // KaTeX Matematik kütüphanesini dinamik yükleme
