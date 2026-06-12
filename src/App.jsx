@@ -18,7 +18,7 @@ const API_KEY = decodeApiKey(ENCODED_API_KEY);
 
 // --- BİRLEŞİK MODELLER VE URL YAPILARI ---
 const MODELS = {
-  text: 'gemma', 
+  text: 'llama-scout', 
   image: 'gptimage',
   video: 'ltx-2',
   audio: 'whisper'
