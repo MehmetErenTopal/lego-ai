@@ -396,7 +396,7 @@ const LegoMarkdown = ({ content }) => {
 
 // --- ANA UYGULAMA ---
 export default function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [input, setInput] = useState('');
   const [mode, setMode] = useState('text'); // text, image, video, audio
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
