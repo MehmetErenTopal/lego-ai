@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu, X, Plus, Mic, Send, Image as ImageIcon, 
-  Video, Music, MessageSquare, Copy, Download, Trash2, Volume2, VolumeX
+  Video, MessageSquare, Copy, Download, Trash2, Volume2, VolumeX
 } from 'lucide-react';
 
 // --- API GÜVENLİĞİ (BASE64) ---
@@ -18,10 +18,9 @@ const API_KEY = decodeApiKey(ENCODED_API_KEY);
 
 // --- BİRLEŞİK MODELLER VE URL YAPILARI ---
 const MODELS = {
-  text: 'gemma',
+  text: 'openai',
   image: 'dreamshaper',
-  video: 'nova-reel',
-  audio: 'kokoro'
+  video: 'nova-reel'
 };
 
 // KaTeX Matematik kütüphanesini dinamik yükleme
@@ -412,7 +411,7 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   
   // Boş Ekran Animasyonu
-  const fallTexts = ["Sorumu Yanıtla", "Görsel Oluştur", "Video Oluştur", "Ses Oluştur", "Bana Yardım Et"];
+  const fallTexts = ["Sorumu Yanıtla", "Görsel Oluştur", "Video Oluştur", "Bana Yardım Et"];
   const [currentFallText, setCurrentFallText] = useState(0);
   const messagesEndRef = useRef(null);
 
@@ -679,12 +678,6 @@ export default function App() {
         
         assistantMessage.url = mediaUrl;
         assistantMessage.content = `**Orijinal İstem:** ${promptText}\n\n**Genişletilmiş İngilizce İstem:** ${detailedPrompt}`;
-      } else if (mode === 'audio') {
-        const encodedPrompt = encodeURIComponent(promptText);
-        const mediaUrl = `https://gen.pollinations.ai/audio/${encodedPrompt}?model=${MODELS.audio}&seed=${seed}`;
-        
-        assistantMessage.url = mediaUrl;
-        assistantMessage.content = `**İstenen Ses Metni:** ${promptText}`;
       }
 
       setMessages(prev => prev.map(msg => msg.id === loadingId ? assistantMessage : msg));
@@ -830,7 +823,6 @@ export default function App() {
                             <div className="mb-4 text-xs font-bold tracking-widest text-gray-500 border-b border-gray-800 pb-2 mb-3 uppercase flex items-center gap-2">
                               {msg.type === 'image' && <ImageIcon size={14}/>}
                               {msg.type === 'video' && <Video size={14}/>}
-                              {msg.type === 'audio' && <Music size={14}/>}
                               {msg.type} OLUŞTURULDU
                             </div>
                           )}
@@ -856,17 +848,6 @@ export default function App() {
                             <div className="space-y-4">
                               <div className="border border-gray-800 bg-[#0a0a0a] p-2">
                                 <video src={msg.url} controls autoPlay loop className="max-w-full h-auto w-full" />
-                              </div>
-                              <div className="text-xs text-gray-400 bg-gray-950 p-3 border border-gray-900 rounded">
-                                <LegoMarkdown content={msg.content} />
-                              </div>
-                            </div>
-                          )}
-                          
-                          {msg.role === 'assistant' && msg.type === 'audio' && (
-                            <div className="space-y-4">
-                              <div className="border border-gray-800 bg-[#0a0a0a] p-4">
-                                <audio src={msg.url} controls className="w-full" />
                               </div>
                               <div className="text-xs text-gray-400 bg-gray-950 p-3 border border-gray-900 rounded">
                                 <LegoMarkdown content={msg.content} />
@@ -907,10 +888,6 @@ export default function App() {
                 <div className="h-px bg-gray-800 w-full" />
                 <button onClick={() => { setMode('video'); setIsModeMenuOpen(false); }} className={`flex items-center gap-3 p-3 text-sm hover:bg-gray-900 transition-colors ${mode === 'video' ? 'text-white' : 'text-gray-500'}`}>
                   <Video size={16} /> Video ({MODELS.video})
-                </button>
-                <div className="h-px bg-gray-800 w-full" />
-                <button onClick={() => { setMode('audio'); setIsModeMenuOpen(false); }} className={`flex items-center gap-3 p-3 text-sm hover:bg-gray-900 transition-colors ${mode === 'audio' ? 'text-white' : 'text-gray-500'}`}>
-                  <Music size={16} /> Ses ({MODELS.audio})
                 </button>
               </div>
             )}
