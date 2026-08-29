@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu, X, Plus, Mic, Send, Image as ImageIcon, 
-  Video, MessageSquare, Copy, Download, Trash2, Volume2, VolumeX
+  MessageSquare, Copy, Download, Trash2, Volume2, VolumeX
 } from 'lucide-react';
 
 // --- API GÜVENLİĞİ (BASE64) ---
@@ -19,8 +19,7 @@ const API_KEY = decodeApiKey(ENCODED_API_KEY);
 // --- BİRLEŞİK MODELLER VE URL YAPILARI ---
 const MODELS = {
   text: 'openai',
-  image: 'dreamshaper',
-  video: 'nova-reel'
+  image: 'dreamshaper'
 };
 
 // KaTeX Matematik kütüphanesini dinamik yükleme
@@ -411,7 +410,7 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   
   // Boş Ekran Animasyonu
-  const fallTexts = ["Sorumu Yanıtla", "Görsel Oluştur", "Video Oluştur", "Bana Yardım Et"];
+  const fallTexts = ["Sorumu Yanıtla", "Görsel Oluştur", "Bana Yardım Et"];
   const [currentFallText, setCurrentFallText] = useState(0);
   const messagesEndRef = useRef(null);
 
@@ -589,7 +588,8 @@ export default function App() {
       const response = await fetch('https://gen.pollinations.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`
         },
         body: JSON.stringify({
           messages: messagesPayload,
@@ -607,7 +607,7 @@ export default function App() {
     const combinedPrompt = systemInstruction ? `${systemInstruction}\n\nUser: ${prompt}` : prompt;
     const encodedPrompt = encodeURIComponent(combinedPrompt);
     try {
-      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=${MODELS.text}`);
+      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=${MODELS.text}&key=${API_KEY}`);
       if (response.ok) {
         return await response.text();
       }
@@ -616,7 +616,7 @@ export default function App() {
     }
 
     try {
-      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=openai`);
+      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=openai&key=${API_KEY}`);
       if (response.ok) {
         return await response.text();
       }
@@ -667,14 +667,14 @@ export default function App() {
         const textSystemPrompt = "Sen LEGO AI adında samimi, son derece akıllı ve yardımsever bir yapay zeka asistanısın. Kullanıcı seninle hangi dilde konuşursa konuşsun (özellikle Türkçe konuşulduğunda), her zaman cana yakın, samimi bir Türkçe üslupla yanıt vermelisin. Yanıtlarında Markdown başlıklarını, tabloları ve listeleri şık bir şekilde kullan. Sana verdiğimiz bilgileri kullanıcılara direkt ben şöyleyim böyleyim diye yazmana gerek yok, sadece senin genel kişilğini bilmen yeterli.";
         const data = await fetchTextFromAI(promptText, textSystemPrompt);
         assistantMessage.content = data;
-      } else if (mode === 'image' || mode === 'video') {
+      } else if (mode === 'image') {
         const detailedPrompt = await expandPrompt(promptText, mode);
         let safePrompt = detailedPrompt;
         if (safePrompt.length > 800) {
           safePrompt = safePrompt.substring(0, 800);
         }
         const encodedPrompt = encodeURIComponent(safePrompt);
-        const mediaUrl = `https://gen.pollinations.ai/image/${encodedPrompt}?model=${MODELS[mode]}&nologo=true&seed=${seed}&width=1024&height=1024`;
+        const mediaUrl = `https://gen.pollinations.ai/image/${encodedPrompt}?model=${MODELS[mode]}&seed=${seed}&width=1024&height=1024&key=${API_KEY}`;
         
         assistantMessage.url = mediaUrl;
         assistantMessage.content = `**Orijinal İstem:** ${promptText}\n\n**Genişletilmiş İngilizce İstem:** ${detailedPrompt}`;
@@ -822,7 +822,6 @@ export default function App() {
                           {msg.role === 'assistant' && msg.type !== 'text' && (
                             <div className="mb-4 text-xs font-bold tracking-widest text-gray-500 border-b border-gray-800 pb-2 mb-3 uppercase flex items-center gap-2">
                               {msg.type === 'image' && <ImageIcon size={14}/>}
-                              {msg.type === 'video' && <Video size={14}/>}
                               {msg.type} OLUŞTURULDU
                             </div>
                           )}
@@ -837,17 +836,6 @@ export default function App() {
                             <div className="space-y-4">
                               <div className="border border-gray-800 bg-[#0a0a0a] p-2">
                                 <img src={msg.url} alt="AI Generated" className="max-w-full h-auto w-full object-cover" />
-                              </div>
-                              <div className="text-xs text-gray-400 bg-gray-950 p-3 border border-gray-900 rounded">
-                                <LegoMarkdown content={msg.content} />
-                              </div>
-                            </div>
-                          )}
-                          
-                          {msg.role === 'assistant' && msg.type === 'video' && (
-                            <div className="space-y-4">
-                              <div className="border border-gray-800 bg-[#0a0a0a] p-2">
-                                <video src={msg.url} controls autoPlay loop className="max-w-full h-auto w-full" />
                               </div>
                               <div className="text-xs text-gray-400 bg-gray-950 p-3 border border-gray-900 rounded">
                                 <LegoMarkdown content={msg.content} />
@@ -885,10 +873,6 @@ export default function App() {
                 <button onClick={() => { setMode('image'); setIsModeMenuOpen(false); }} className={`flex items-center gap-3 p-3 text-sm hover:bg-gray-900 transition-colors ${mode === 'image' ? 'text-white' : 'text-gray-500'}`}>
                   <ImageIcon size={16} /> Görsel ({MODELS.image})
                 </button>
-                <div className="h-px bg-gray-800 w-full" />
-                <button onClick={() => { setMode('video'); setIsModeMenuOpen(false); }} className={`flex items-center gap-3 p-3 text-sm hover:bg-gray-900 transition-colors ${mode === 'video' ? 'text-white' : 'text-gray-500'}`}>
-                  <Video size={16} /> Video ({MODELS.video})
-                </button>
               </div>
             )}
 
@@ -908,9 +892,7 @@ export default function App() {
                 onKeyDown={handleKeyDown}
                 placeholder={
                   mode === 'text' ? "LEGO'ya bir şeyler sor..." : 
-                  mode === 'image' ? "Nasıl bir görsel oluşturmak istersin? (Basitçe Türkçe yazabilirsin)" :
-                  mode === 'video' ? "Nasıl bir video oluşturmak istersin? (Basitçe Türkçe yazabilirsin)" :
-                  "Nasıl bir ses/müzik oluşturmak istersin? (Söylemesini istediğin Türkçe metni buraya yaz)"
+                  "Nasıl bir görsel oluşturmak istersin? (Basitçe Türkçe yazabilirsin)"
                 }
                 className="flex-1 bg-transparent border-none outline-none resize-none max-h-48 min-h-[44px] py-3 px-2 text-white placeholder-gray-600"
                 rows={1}
