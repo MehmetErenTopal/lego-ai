@@ -18,10 +18,10 @@ const API_KEY = decodeApiKey(ENCODED_API_KEY);
 
 // --- BİRLEŞİK MODELLER VE URL YAPILARI ---
 const MODELS = {
-  text: 'llama-scout', 
-  image: 'gptimage',
-  video: 'ltx-2',
-  audio: 'whisper'
+  text: 'gemma',
+  image: 'dreamshaper',
+  video: 'nova-reel',
+  audio: 'kokoro'
 };
 
 // KaTeX Matematik kütüphanesini dinamik yükleme
@@ -587,11 +587,10 @@ export default function App() {
     messagesPayload.push({ role: 'user', content: prompt });
 
     try {
-      const response = await fetch('[https://gen.pollinations.ai/v1/chat/completions](https://gen.pollinations.ai/v1/chat/completions)', {
+      const response = await fetch('https://gen.pollinations.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           messages: messagesPayload,
@@ -609,7 +608,7 @@ export default function App() {
     const combinedPrompt = systemInstruction ? `${systemInstruction}\n\nUser: ${prompt}` : prompt;
     const encodedPrompt = encodeURIComponent(combinedPrompt);
     try {
-      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=${MODELS.text}&key=${API_KEY}`);
+      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=${MODELS.text}`);
       if (response.ok) {
         return await response.text();
       }
@@ -618,7 +617,7 @@ export default function App() {
     }
 
     try {
-      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=openai&key=${API_KEY}`);
+      const response = await fetch(`https://gen.pollinations.ai/text/${encodedPrompt}?model=openai`);
       if (response.ok) {
         return await response.text();
       }
@@ -676,13 +675,13 @@ export default function App() {
           safePrompt = safePrompt.substring(0, 800);
         }
         const encodedPrompt = encodeURIComponent(safePrompt);
-        const mediaUrl = `https://gen.pollinations.ai/image/${encodedPrompt}?model=${MODELS[mode]}&nologo=true&seed=${seed}&width=1024&height=1024&key=${API_KEY}`;
+        const mediaUrl = `https://gen.pollinations.ai/image/${encodedPrompt}?model=${MODELS[mode]}&nologo=true&seed=${seed}&width=1024&height=1024`;
         
         assistantMessage.url = mediaUrl;
         assistantMessage.content = `**Orijinal İstem:** ${promptText}\n\n**Genişletilmiş İngilizce İstem:** ${detailedPrompt}`;
       } else if (mode === 'audio') {
         const encodedPrompt = encodeURIComponent(promptText);
-        const mediaUrl = `https://gen.pollinations.ai/audio/${encodedPrompt}?model=${MODELS.audio}&seed=${seed}&key=${API_KEY}`;
+        const mediaUrl = `https://gen.pollinations.ai/audio/${encodedPrompt}?model=${MODELS.audio}&seed=${seed}`;
         
         assistantMessage.url = mediaUrl;
         assistantMessage.content = `**İstenen Ses Metni:** ${promptText}`;
